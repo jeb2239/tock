@@ -7,6 +7,8 @@ use common::{RingBuffer, Queue};
 #[allow(improper_ctypes)]
 extern {
     pub fn switch_to_user(user_stack: *mut u8, mem_base: *mut u8) -> *mut u8;
+    pub fn mpu_region_1_set(start: *const u8, end: *const u8);
+    pub static mut MPU : *mut u8;
 }
 
 /// Size of each processes's memory region in bytes
@@ -238,6 +240,10 @@ impl<'a> Process<'a> {
         if self.cur_stack < self.exposed_memory_start {
             breakpoint();
         }
+        let end_memory : *const u8 =
+            &self.memory[self.memory.len() - 1] as *const u8;
+        mpu_region_1_set(self.exposed_memory_start, end_memory);
+        *MPU = 8;
         let psp = switch_to_user(self.cur_stack, self.exposed_memory_start);
         self.cur_stack = psp;
     }

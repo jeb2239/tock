@@ -13,7 +13,7 @@ LOADER = $(SRC_DIR)chips/sam4l/loader.ld
 
 ARCH = cortex-m4
 
-$(BUILD_DIR)/libsam4l.rlib: $(call rwildcard,$(SRC_DIR)chips/sam4l,*.rs) $(BUILD_DIR)/libcore.rlib $(BUILD_DIR)/libhil.rlib $(BUILD_DIR)/libcommon.rlib
+$(BUILD_DIR)/libsam4l.rlib: $(call rwildcard,$(SRC_DIR)chips/sam4l,*.rs) $(BUILD_DIR)/libcore.rlib $(BUILD_DIR)/libhil.rlib $(BUILD_DIR)/libcommon.rlib $(BUILD_DIR)/libcortexm4.rlib
 	@echo "Building $@"
 	@$(RUSTC) $(RUSTC_FLAGS) --out-dir $(BUILD_DIR) $(SRC_DIR)chips/sam4l/lib.rs
 

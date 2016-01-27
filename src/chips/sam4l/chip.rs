@@ -1,4 +1,5 @@
 use common::{RingBuffer,Queue};
+use cortexm4;
 use ast;
 //use adc;
 use dma;
@@ -61,6 +62,10 @@ impl Sam4l {
 
     pub unsafe fn has_pending_interrupts(&mut self) -> bool {
         INTERRUPT_QUEUE.as_mut().unwrap().has_elements()
+    }
+
+    pub unsafe fn mpu(&mut self) -> &mut cortexm4::Mpu {
+        &mut cortexm4::MPU
     }
 }
 

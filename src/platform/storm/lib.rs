@@ -146,6 +146,16 @@ pub unsafe fn init<'a>() -> &'a mut Firestorm {
 
     firestorm.console.initialize();
 
+    {
+        use hil::uart::UART;
+        sam4l::usart::USART3.send_byte('a' as u8);
+        let num_mpus = firestorm.chip.mpu().num_regions();
+        sam4l::usart::USART3.send_byte(num_mpus + ('0' as u8));
+        sam4l::usart::USART3.send_byte('\n' as u8);
+    }
+
+
+
     firestorm
 }
 
