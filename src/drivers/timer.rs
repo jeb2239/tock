@@ -1,5 +1,6 @@
 use core::cell::Cell;
-use hil::{Callback, Driver, NUM_PROCS};
+use process::{Callback, NUM_PROCS};
+use hil::Driver;
 use hil::alarm::{Alarm, AlarmClient};
 use hil::timer::{Timer, TimerClient};
 
@@ -67,7 +68,7 @@ impl<'a, Alrm: Alarm> AlarmClient for AlarmToTimer<'a, Alrm> {
 }
 
 #[derive(Copy, Clone)]
-struct TimerData {
+pub struct TimerData {
     t0: u32,
     interval: u32,
     repeating: bool,
@@ -76,14 +77,14 @@ struct TimerData {
 
 pub struct TimerDriver<'a, T: Timer + 'a> {
     timer: &'a T,
-    app_timers: [Cell<Option<TimerData>>; NUM_PROCS]
+    app_timers: [Cell<Option<TimerData>>; NUM_PROCS],
 }
 
 impl<'a, T: Timer> TimerDriver<'a, T> {
     pub const fn new(timer: &'a T) -> TimerDriver<'a, T> {
         TimerDriver {
             timer: timer,
-            app_timers: [Cell::new(None); NUM_PROCS]
+            app_timers: [Cell::new(None); NUM_PROCS],
         }
     }
 }
