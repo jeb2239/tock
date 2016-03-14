@@ -234,3 +234,14 @@ pub unsafe fn init<'a>() -> &'a mut Firestorm {
     firestorm
 }
 
+pub fn rust_app() -> ! {
+
+       unsafe{
+        sam4l::gpio::PC[10].enable();
+        sam4l::gpio::PC[10].set();}
+
+        loop {
+            
+        }
+}
+
