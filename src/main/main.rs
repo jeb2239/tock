@@ -17,6 +17,9 @@ extern {
     static _sapps : usize;
 }
 
+/*rust app*/
+
+
 #[no_mangle]
 pub extern fn main() {
     use process::Process;
@@ -28,7 +31,7 @@ pub extern fn main() {
 
 
     let processes = unsafe {
-        process::process::PROCS = [Process::create(&_sapps)];
+        process::process::PROCS = [Process::create(platform::rust_app as *const usize)];
         &mut process::process::PROCS
     };
 

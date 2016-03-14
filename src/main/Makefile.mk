@@ -18,3 +18,16 @@ $(BUILD_PLATFORM_DIR)/kernel.ir: $(MAIN_DEPS) | $(BUILD_PLATFORM_DIR)
 	@echo "Building $@"
 	@$(RUSTC) $(RUSTC_FLAGS) -C lto --emit llvm-ir -o $@ $(SRC_DIR)main/main.rs
 
+$(BUILD_PLATFORM_DIR)/kernel.elf: $(BUILD_PLATFORM_DIR)/kernel.o $(BUILD_PLATFORM_DIR)/ctx_switch.o
+	@echo "Building $@"
+	@$(CC) $^ $(CFLAGS) $(LDFLAGS) -o $@
+
+SLOAD=sload
+SDB_MAINTAINER=$(shell whoami)
+SDB_VERSION=$(shell git show-ref -s HEAD)
+SDB_NAME=storm.rs
+SDB_DESCRIPTION="An OS for the storm"
+
+$(BUILD_PLATFORM_DIR)/kernel.sdb: $(BUILD_PLATFORM_DIR)/kernel.elf
+	@echo "Building $@"
+	@$(SLOAD) pack -m "$(SDB_MAINTAINER)" -v "$(SDB_VERSION)" -n "$(SDB_NAME)" -d $(SDB_DESCRIPTION) -o $@ $<

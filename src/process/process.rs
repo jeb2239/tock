@@ -9,6 +9,10 @@ extern {
     pub fn switch_to_user(user_stack: *mut u8, mem_base: *mut u8) -> *mut u8;
 }
 
+
+
+
+
 /// Size of each processes's memory region in bytes
 pub const PROC_MEMORY_SIZE : usize = 8192;
 pub const NUM_PROCS : usize = 1;
@@ -19,6 +23,17 @@ static mut FREE_MEMORY_IDX: usize = 0;
 static mut MEMORIES: [[u8; PROC_MEMORY_SIZE]; NUM_PROCS] = [[0; PROC_MEMORY_SIZE]; NUM_PROCS];
 
 pub static mut PROCS : [Option<Process<'static>>; NUM_PROCS] = [None];
+
+ // trait Application {
+ //        // add code here
+       
+ 
+ //    }
+
+/*
+fn init_fn(pc:usize,r0:usize,r1:i32,r2:i32,r3:i32) -> !{
+	panic!("hey");
+}*/
 
 pub fn schedule(callback: Callback, appid: ::AppId) -> bool {
     let procs = unsafe { &mut PROCS };
@@ -51,6 +66,8 @@ pub struct Callback {
     pub r3: usize,
     pub pc: usize
 }
+
+
 
 #[repr(C,packed)]
 struct LoadInfo {
@@ -121,68 +138,102 @@ impl<'a> Process<'a> {
         }
     }
 
-    unsafe fn load(&mut self, start_addr: *const usize) {
-        let mut start_addr = start_addr as *const u8;
-        let load_info : &LoadInfo = mem::transmute(start_addr);
-        start_addr = start_addr.offset(mem::size_of::<LoadInfo>() as isize);
 
-        let rel_data : &mut [usize] = mem::transmute(raw::Slice{
-            data: start_addr,
-            len: load_info.rel_data_size / 4
-        });
-        start_addr = start_addr.offset(load_info.rel_data_size as isize);
+   
 
-        let exposed_memory_start = self.exposed_memory_start;
+    
+
+
+
+    unsafe fn load(&mut self, init_fn: *const usize) {
+        //let mut start_addr = start_addr as *const u8;
+        //
+        //let load_info : &LoadInfo = mem::transmute(start_addr);
+        //start_addr = start_addr.offset(mem::size_of::<LoadInfo>() as isize);
+
+        // let rel_data : &mut [usize] = mem::transmute(raw::Slice{
+        //     data: start_addr,
+        //     len: load_info.rel_data_size / 4
+        // });
+       // start_addr = start_addr.offset(load_info.rel_data_size as isize);
+
+       //we keep this because it is not the application's job to set this addr
+       //it is the kernel's job
+
+        //let exposed_memory_start = self.exposed_memory_start;
 
         // Zero out BSS
-        ::core::intrinsics::write_bytes(
-            exposed_memory_start.offset(load_info.bss_start_offset as isize),
-            0,
-            load_info.bss_end_offset - load_info.bss_start_offset);
+        // we don't need to do this now
+        // we don't need write_bytes?
+      //  ::core::intrinsics::write_bytes(
+
+        //don't need this stuff either
+        //
+
+
+            //exposed_memory_start.offset(load_info.bss_start_offset as isize),
+           // 0,
+           // load_info.bss_end_offset - load_info.bss_start_offset);
+        //the app is being compiled in to the kernel so the 
+        //apps data section is going to be in the kernel now
+        // make sure that the kernel data is not accesible from the rust app
 
         // Copy data into Data section
-        let init_data : &[u8] = mem::transmute(raw::Slice{
-            data: (load_info.init_data_loc + start_addr as usize) as *mut u8,
-            len: load_info.init_data_size
-        });
+        // let init_data : &[u8] = mem::transmute(raw::Slice{
+        //     data: (load_info.init_data_loc + start_addr as usize) as *mut u8,
+        //     len: load_info.init_data_size
+        // });
 
-        let target_data : &mut [u8] = mem::transmute(raw::Slice{
-            data: exposed_memory_start,
-            len: load_info.init_data_size
-        });
+        //In a c app we would have stored the code in flash
+        //but now we don't need to, our rust app will just become
+        //part of what ever is loaded into the kernel
 
-        target_data.clone_from_slice(init_data);
+        // let target_data : &mut [u8] = mem::transmute(raw::Slice{
+        //     data: exposed_memory_start,
+        //     len: load_info.init_data_size
+        // });
 
-        let fixup = |addr: *mut usize| {
-            let entry = *addr;
-            if (entry & 0x80000000) == 0 {
-                // Regular data (memory relative)
-                *addr = entry + (exposed_memory_start as usize);
-            } else {
-                // rodata or function pointer (code relative)
-                *addr = (entry ^ 0x80000000) + (start_addr as usize);
-            }
-        };
+        //target_data.clone_from_slice(init_data);
+
+        // let fixup = |addr: *mut usize| {
+        //     let entry = *addr;
+        //     if (entry & 0x80000000) == 0 {
+        //         // Regular data (memory relative)
+        //         *addr = entry + (exposed_memory_start as usize);
+        //     } else {
+        //         // rodata or function pointer (code relative)
+        //         *addr = (entry ^ 0x80000000) + (start_addr as usize);
+        //     }
+        // };
+
+        // the global offset -> part of data
+        // we don't need this in rust apps because?
 
         // Fixup Global Offset Table
-        let mut got_cur = exposed_memory_start.offset(load_info.got_start_offset as isize) as *mut usize;
-        let got_end = exposed_memory_start.offset(load_info.got_end_offset as isize) as *mut usize;
-        while got_cur != got_end {
-            fixup(got_cur);
-            got_cur = got_cur.offset(1);
-        }
+        // let mut got_cur = exposed_memory_start.offset(load_info.got_start_offset as isize) as *mut usize;
+        // let got_end = exposed_memory_start.offset(load_info.got_end_offset as isize) as *mut usize;
+        // while got_cur != got_end {
+        //     fixup(got_cur);
+        //     got_cur = got_cur.offset(1);
+        // }
 
         // Fixup relocation data
-        for (i, addr) in rel_data.iter().enumerate() {
-            if i % 2 == 0 { // Only the first of every 2 entries is an address
-                fixup(exposed_memory_start.offset(*addr as isize) as *mut usize);
-            }
-        }
+        // for (i, addr) in rel_data.iter().enumerate() {
+        //     if i % 2 == 0 { // Only the first of every 2 entries is an address
+        //         fixup(exposed_memory_start.offset(*addr as isize) as *mut usize);
+        //     }
+        // }
 
+        //here is the where we return an init function from our application structure
         // Entry point is offset from app code
-        let init_fn = start_addr as usize + load_info.entry_loc;
 
-        let heap_start = exposed_memory_start.offset(load_info.bss_end_offset as isize);
+        let init_fn = init_fn as usize; 
+
+        // this is not needed all the info is in the Application trait
+        //load_info.entry_loc;
+
+        // heap_start and exposed memory start are now the same thing
+        let heap_start = self.exposed_memory_start; //.offset(load_info.bss_end_offset as isize);
 
         self.callbacks.enqueue(Callback {
             pc: init_fn as usize,
