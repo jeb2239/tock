@@ -5,7 +5,7 @@ use process::{AppSlice,AppId};
 use common::Queue;
 use hil;
 use syscall;
-i
+
 pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                   appid: AppId) {
     loop {

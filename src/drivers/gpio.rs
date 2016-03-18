@@ -97,7 +97,8 @@ impl<'a, G: GPIOPin> Driver for GPIO<'a, G> {
                     -1
                 } else {
                     pins[data].enable_output();
-                    0
+                     0
+
                 }
             },
 
