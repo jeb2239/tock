@@ -28,3 +28,14 @@ pub trait Controller {
     fn configure(&self, Self::Config);
 }
 
+//compare with tiny os
+// do a null system
+//what is a null system call perfromance 
+//compare 
+
+
+//something that takes, something that has arguments
+//microbenchmarks
+//pain a picture of what the overhead looks
+// arm -- system clock
+// checks 

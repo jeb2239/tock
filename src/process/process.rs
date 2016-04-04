@@ -6,6 +6,10 @@ use common::{RingBuffer, Queue};
 
 #[allow(improper_ctypes)]
 extern {
+
+    //This pics up the switch_to_user machine code stub
+    //it also takes as an argument a user stack,  in my case we are using the 
+    // the kernel stack
     pub fn switch_to_user(user_stack: *mut u8, mem_base: *mut u8) -> *mut u8;
 }
 

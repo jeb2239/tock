@@ -5,7 +5,7 @@
 
 /* Exported functions */
 .global SVC_Handler
-.globl switch_to_user
+.global switch_to_user
 .global __wait
 .global __allow
 .global __subscribe

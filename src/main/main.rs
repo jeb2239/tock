@@ -9,8 +9,9 @@ extern crate process;
 extern crate platform;
 
 mod sched;
-
+mod app;
 pub mod syscall;
+
 
 #[allow(improper_ctypes)]
 extern {
@@ -31,7 +32,7 @@ pub extern fn main() {
 
 
     let processes = unsafe {
-        process::process::PROCS = [Process::create(platform::rust_app as *const usize)];
+        process::process::PROCS = [Process::create(app::rust_app as *const usize)];
         &mut process::process::PROCS
     };
 

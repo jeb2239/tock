@@ -7,6 +7,9 @@ use hil::spi_master::ClockPolarity;
 use hil::spi_master::ClockPhase;
 
 
+//can i change this to avoid copying stuff
+
+
 /* SPI operations are handled by coping into a kernel buffer for
  * writes and copying out of a kernel buffer for reads.
  *

@@ -97,7 +97,7 @@ impl<'a, U: UART> Driver for Console<'a, U> {
                         });
                 0
             },
-            1 /* putstr/write_done */ => {
+            1 /* putstr/write_done */ => {  /* need to move this code and do a combo of this */
                 let result = self.apps[callback.app_id().idx()].map(|app| {
                     match app.write_buffer.take() {
                         Some(slice) => {

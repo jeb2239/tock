@@ -17,6 +17,8 @@ pub struct AppPtr<L, T> {
 }
 
 impl<L, T> AppPtr<L, T> {
+    //this does not take a self parameter, this is an associated function ( like static method )
+    //AppPtr::new(ptr)
     pub unsafe fn new(ptr: *mut T, appid: AppId) -> AppPtr<L, T> {
         AppPtr {
             ptr: Unique::new(ptr),
@@ -25,6 +27,12 @@ impl<L, T> AppPtr<L, T> {
         }
     }
 }
+
+//this allows us to use the dereferencing operator
+//also taking advantage of `deref` coercion
+//Here’s the rule: If you have a type U, and it implements Deref<Target=T>,
+// values of &U will automatically coerce to a &T. Here’s an example:
+
 
 impl<L, T> Deref for AppPtr<L, T> {
     type Target = T;
@@ -36,6 +44,10 @@ impl<L, T> Deref for AppPtr<L, T> {
     }
 }
 
+//this specifies the functionality of dereferencing mutably, for example
+// a mutable deref is something like *v = 20     
+
+
 impl<L, T> DerefMut for AppPtr<L, T> {
     fn deref_mut(&mut self) -> &mut T {
         unsafe {
@@ -43,6 +55,10 @@ impl<L, T> DerefMut for AppPtr<L, T> {
         }
     }
 }
+
+//this is freeing resources
+//by implementing drop we are essentially defining a destructor
+//this takes our processes and calls free on them
 
 impl<L, T> Drop for AppPtr<L, T> {
     fn drop(&mut self) {

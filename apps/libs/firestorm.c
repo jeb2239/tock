@@ -16,12 +16,12 @@ static CB_TYPE putstr_cb(
 void putnstr(const char *str, size_t len) {
   char* buf = (char*)malloc(len * sizeof(char));
   strncpy(buf, str, len);
-  putnstr_async(buf, len, putstr_cb, buf);
+  putnstr_async(buf, len, putstr_cb, buf); //
   wait_for(PUTSTR);
 }
 
 void putnstr_async(const char *str, size_t len, subscribe_cb cb, void* userdata) {
-  allow(0, 1, (void*)str, len);
+  allow(0, 1, (void*)str, len);  //two system calls no type safe way of passing in buffer,
   subscribe(0, 1, cb, userdata);
 }
 

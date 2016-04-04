@@ -100,6 +100,7 @@ impl<'a, G: GPIOPin> Driver for GPIO<'a, G> {
                      0
 
                 }
+                
             },
 
             // set pin
