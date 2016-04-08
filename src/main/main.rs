@@ -1,4 +1,4 @@
-#![feature(const_fn)]
+#![feature(core_str_ext,core_slice_ext,const_fn,no_std,raw,core_char_ext,unique,slice_bytes)]
 #![no_main]
 #![no_std]
 
@@ -6,7 +6,10 @@ extern crate common;
 extern crate support;
 extern crate hil;
 extern crate process;
+#[macro_use(println,print)]
 extern crate platform;
+
+
 
 mod sched;
 mod app;
@@ -29,8 +32,13 @@ pub extern fn main() {
     let mut platform = unsafe {
         platform::init()
     };
+   
+      println!("{:?}",40 );
+      
+        
 
-
+   
+    //println!("{:?}", 4);
     let processes = unsafe {
         process::process::PROCS = [Process::create(app::rust_app as *const usize)];
         &mut process::process::PROCS

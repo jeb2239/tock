@@ -22,7 +22,7 @@ pub mod io;
 // the module here and uncomment the call to start the test in
 // the init function below.
 //mod gpio_dummy;
-//mod spi_dummy;
+mod spi_dummy;
 //mod i2c_dummy;
 
 static mut spi_read_buf:  [u8; 64] = [0; 64];
@@ -78,6 +78,23 @@ macro_rules! static_init {
             tmp
         };
    }
+}
+
+extern{
+    fn __start_count() -> isize;
+    fn __end_count() -> isize;
+}
+
+pub fn start_count() -> isize {
+  unsafe{
+    __start_count()
+  }
+}
+
+pub fn end_count() -> isize {
+  unsafe{
+    __end_count()
+  }
 }
 
 pub unsafe fn init<'a>() -> &'a mut Firestorm {
@@ -224,6 +241,7 @@ pub unsafe fn init<'a>() -> &'a mut Firestorm {
     // Firestorm's pin 8 changes value (e.g., connect a push button to pin 8 and
     // press toggle it).
     //gpio_dummy::gpio_dummy_test();
+    
 
     // Uncommenting the following line will test the I2C
     //i2c_dummy::i2c_scan_slaves();
@@ -233,10 +251,22 @@ pub unsafe fn init<'a>() -> &'a mut Firestorm {
 
     firestorm.console.initialize();
     firestorm.nrf51822.initialize();
+    println!("{:?}", 4444);
+    start_count();
+    sam4l::gpio::PC[10].enable_output();
+    sam4l::gpio::PC[10].set();
+    sam4l::gpio::PC[11].enable_output();
+    //start_count();
+    let a = end_count();
+    
+    println!("{:?}",a );
+    println!("{:?}", 4444 );
     firestorm
 }
 
 /*******************************************
 
 ********************************************/
+
+
 

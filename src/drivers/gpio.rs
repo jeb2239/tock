@@ -93,6 +93,7 @@ impl<'a, G: GPIOPin> Driver for GPIO<'a, G> {
         match command_num {
             // enable output
             0 => {
+                
                 if data >= pins.len() {
                     -1
                 } else {
@@ -100,6 +101,8 @@ impl<'a, G: GPIOPin> Driver for GPIO<'a, G> {
                      0
 
                 }
+                
+              //  0
                 
             },
 

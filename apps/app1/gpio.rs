@@ -16,5 +16,6 @@ pub fn clear_pin(pin: usize) {
 
 pub fn toggle_pin(pin: usize) {
     command(1, 4, pin);
+    
 }
 

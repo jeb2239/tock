@@ -88,17 +88,12 @@ struct LoadInfo {
 pub struct Process<'a> {
     /// The process's memory.
     memory: &'a mut [u8],
-
     exposed_memory_start: *mut u8,
-
     /// The offset in `memory` to use for the process stack.
     cur_stack: *mut u8,
-
     wait_pc: usize,
     psr: usize,
-
     pub state: State,
-
     pub callbacks: RingBuffer<'a, Callback>
 }
 
