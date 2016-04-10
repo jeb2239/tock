@@ -33,7 +33,7 @@ pub extern fn main() {
         platform::init()
     };
    
-      println!("{:?}",40 );
+     // println!("{:?}",40 );
       
         
 

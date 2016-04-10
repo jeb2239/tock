@@ -249,18 +249,21 @@ pub unsafe fn init<'a>() -> &'a mut Firestorm {
     //i2c_dummy::i2c_accel_test();
     //i2c_dummy::i2c_li_test();
 
+    //librs==========================//
     firestorm.console.initialize();
     firestorm.nrf51822.initialize();
-    println!("{:?}", 4444);
-    start_count();
+    //println!("{:?}", 4444);
     sam4l::gpio::PC[10].enable_output();
-    sam4l::gpio::PC[10].set();
-    sam4l::gpio::PC[11].enable_output();
-    //start_count();
-    let a = end_count();
+
+   // start_count();
+
+    //sam4l::gpio::PC[10].set();
+   // unsafe { asm!("nop" :::: "volatile"); }
+   // sam4l::gpio::PC[10].toggle();
+   // let a =end_count();
+  //  println!("{:?}",a);
     
-    println!("{:?}",a );
-    println!("{:?}", 4444 );
+   // println!("{:?}", 4444 );
     firestorm
 }
 

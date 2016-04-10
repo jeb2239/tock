@@ -300,8 +300,9 @@ pub fn rust_app() -> ! {
       //  sam4l::gpio::PC[10].enable_output();
       // sam4l::gpio::PC[10].set();
       //println!("{:?}", 4);
-      start_count();
       enable_pin(0);
+      start_count();
+      toggle_pin(0);
       let count =end_count();
       println!("{:?}",count );
       
