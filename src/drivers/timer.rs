@@ -109,7 +109,8 @@ impl<'a, T: Timer> Driver for TimerDriver<'a, T> {
                     repeating: true,
                     callback: callback
                 }));
-                self.timer.repeat(interval);
+                
+                self.timer.repeat(interval);//
                 0
             },
             _ => -1

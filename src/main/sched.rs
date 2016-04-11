@@ -9,7 +9,7 @@ use syscall;
 pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                   appid: AppId) {
     loop {
-        match process.state {
+        match process.state {  //so here we have to check the state of the process running
             process::State::Running => {
                 process.switch_to();
             }
@@ -34,7 +34,10 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                 let subdriver_num = process.r1();
                 let callback_ptr = process.r2() as *mut ();
                 let appdata = process.r3();
-
+                println!("{:?}",driver_num);
+                println!("{:?}",subdriver_num );
+                println!("{:?}",callback_ptr );
+                println!("{:?}", appdata );
                 let res = platform.with_driver(driver_num, |driver| {
                     let callback =
                         hil::Callback::new(appid, appdata, callback_ptr);

@@ -18,6 +18,7 @@ extern {
     fn __wait() -> isize;
     fn __start_count() -> isize;
     fn __end_count() -> isize;
+    fn switch_to_user(user_stack: *mut u8, mem_base: *mut u8) -> *mut u8;
 }
 
 pub fn start_count() -> isize {
@@ -25,6 +26,8 @@ pub fn start_count() -> isize {
     __start_count()
   }
 }
+
+
 
 pub fn end_count() -> isize {
   unsafe{
@@ -265,27 +268,30 @@ pub fn wait() -> isize {
 
 
 pub fn rust_app() -> ! {
+          enable_pin(0);
 
-        // fn time_repeat_sub(cb:usize)-> isize{
-        //     subscribe(3,1,cb,0)
+     /*    fn time_repeat_sub(cb:usize)-> isize{
+             println!("{:?}","yo" );
+             subscribe(3,1,cb,0)
             
-        // }
+         }
 
-        // fn timer_cb() -> isize {
-        //     let a =toggle_pin(0);
-        //     println!("in timer_cb");
-        //     a 
-        // }
+         fn timer_cb() -> isize {
+             let a =toggle_pin(0);
+             println!("in timer_cb");
+             a 
+         }
 
-        // let timer_cb = timer_cb as usize;
-
-        
+         let timer_cb = timer_cb as usize;*/
+       // enable_output(0);
 
        // println!("{:?}",add(3,1));
-       // set_pin(0);
+       start_count();
+      // set_pin(0);
+       println!("{:?}", end_count());
        // toggle_pin(0);
-      //   println!("{:?}",time_repeat_sub(timer_cb));
-      //   //println!("{:?}");
+    //    time_repeat_sub(timer_cb);
+      
       //   //  println!("hello");
       //  // let a = enable_pin(0);
       //  // println!("{:?}",a);
@@ -300,17 +306,19 @@ pub fn rust_app() -> ! {
       //  sam4l::gpio::PC[10].enable_output();
       // sam4l::gpio::PC[10].set();
       //println!("{:?}", 4);
-      enable_pin(0);
-      start_count();
-      toggle_pin(0);
-      let count =end_count();
-      println!("{:?}",count );
-      
+      // enable_pin(0); //commands are not pending interupts
+      // start_count();
+      // set_pin(0);
+      // let count =end_count();
+      // println!("{:?}",count );
+      loop{
+      wait(); // we make a syscal so this causes us to jump out of do process;
+      }
         
 
-        loop {
-            wait();
-        }
+      //  loop {
+       //     wait();
+        //}
 
 }
 

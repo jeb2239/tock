@@ -108,12 +108,14 @@ impl<'a, G: GPIOPin> Driver for GPIO<'a, G> {
 
             // set pin
             1 => {
-                if data >= pins.len() {
+          /*      if data >= pins.len() {
                     -1
                 } else {
                     pins[data].set();
                     0
                 }
+
+            */0
             },
 
             // clear pin

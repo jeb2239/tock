@@ -46,20 +46,26 @@ pub extern fn main() {
 
     loop {
         unsafe {
-            platform.service_pending_interrupts();
+           // println!("{:?}", 30);
+            platform.service_pending_interrupts();//handle everything that wants to interrupt us 
 
-            for (i, p) in processes.iter_mut().enumerate() {
+            for (i, p) in processes.iter_mut().enumerate() { //in here we have process 
                 p.as_mut().map(|process| {
+            //        println!("{:?}",process.exposed_memory_start);
+
                     sched::do_process(platform, process, AppId::new(i));
+
                 });
             }
 
             support::atomic(|| {
                 if !platform.has_pending_interrupts() {
+             //       println!("{:?}", 20);
                     support::wfi();
                 }
             })
         };
+       // println!("{:?}","yo" );
     }
 }
 

@@ -253,7 +253,7 @@ pub unsafe fn init<'a>() -> &'a mut Firestorm {
     firestorm.console.initialize();
     firestorm.nrf51822.initialize();
     //println!("{:?}", 4444);
-    sam4l::gpio::PC[10].enable_output();
+    //sam4l::gpio::PC[10].enable_output();
 
    // start_count();
 

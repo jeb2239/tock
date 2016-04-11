@@ -20,6 +20,7 @@ pub fn nop() {
 #[inline(always)]
 /// WFI instruction
 pub unsafe fn wfi() {
+    //this is so we sleep
     asm!("wfi" :::: "volatile");
 }
 
