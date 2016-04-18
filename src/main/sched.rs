@@ -31,7 +31,9 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
             },
             Some(syscall::SUBSCRIBE) => {
                 let driver_num = process.r0();
-                let subdriver_num = process.r1();
+                let subdriver_num = process.r1();// ----- in stead of passing in a number, just pass in a pointer to the driver 
+                                                //function
+                                                
                 let callback_ptr = process.r2() as *mut ();
                 let appdata = process.r3();
                 println!("{:?}",driver_num);
