@@ -11,8 +11,10 @@ use syscall;
 use core::raw::Slice;
 use core::ops::{Deref,DerefMut};
 use core::ptr::Unique;
+use drivers::typedgpio;
 #[allow(improper_ctypes)]
 extern {
+    fn __safe_call()
     fn __allow(driver_num: usize, allownum: usize, ptr: *mut (), len: usize) -> isize;
     fn __subscribe(driver_num: usize, subnum: usize, cb: usize, appdata: usize) -> isize;
     fn __command(driver_num: usize, cmdnum: usize, arg1: usize) -> isize;
@@ -27,6 +29,15 @@ pub fn start_count() -> isize {
     __start_count()
   }
 }
+
+pub fn safe_call() -> isize {
+    unsafe{
+        __safe_call()
+    }
+}
+
+
+
 
 
 

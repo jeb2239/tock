@@ -8,6 +8,7 @@ extern crate hil;
 extern crate process;
 #[macro_use(println,print)]
 extern crate platform;
+extern crate drivers;
 
 
 

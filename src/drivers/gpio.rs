@@ -116,7 +116,7 @@ impl<'a, G: GPIOPin> Driver for GPIO<'a, G> {
                     0
                 }
 
-            0
+            
             },
 
             // clear pin
