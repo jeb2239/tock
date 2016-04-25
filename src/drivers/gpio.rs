@@ -90,7 +90,8 @@ impl<'a, G: GPIOPin> Driver for GPIO<'a, G> {
 
     fn command(&self, command_num: usize, data: usize) -> isize {
         let pins = self.pins.as_ref();
-        match command_num {
+        //yeah llvm will compile this down such that all that 
+        match command_num {  //one less offset
             // enable output
             0 => {
                 
@@ -108,14 +109,14 @@ impl<'a, G: GPIOPin> Driver for GPIO<'a, G> {
 
             // set pin
             1 => {
-          /*      if data >= pins.len() {
+                if data >= pins.len() {
                     -1
                 } else {
                     pins[data].set();
                     0
                 }
 
-            */0
+            0
             },
 
             // clear pin

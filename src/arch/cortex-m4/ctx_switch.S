@@ -73,6 +73,14 @@ __command:
     pop {r4-r11}
     bx lr
 
+.thumb_func
+__safe_call:
+  push {r4-r11}
+  svc 5
+  pop {r4-r11}
+  bx lr
+  
+
 
   .syntax unified
   .cpu cortex-m4
