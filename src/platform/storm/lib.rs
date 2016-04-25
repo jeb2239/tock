@@ -38,6 +38,7 @@ pub struct Firestorm {
     isl29035: &'static drivers::isl29035::Isl29035<'static>,
     spi: &'static drivers::spi::Spi<'static, sam4l::spi::Spi>,
     nrf51822: &'static drivers::nrf51822_serialization::Nrf51822Serialization<'static, sam4l::usart::USART>,
+    typedgpio: &'static drivers::typedgpio::TypedGPIO<'static,sam4l::gpio::GPIOPin>
 }
 
 impl Firestorm {

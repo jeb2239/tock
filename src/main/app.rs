@@ -14,7 +14,7 @@ use core::ptr::Unique;
 use drivers::typedgpio;
 #[allow(improper_ctypes)]
 extern {
-    fn __safe_call()
+    fn __safe_call();
     fn __allow(driver_num: usize, allownum: usize, ptr: *mut (), len: usize) -> isize;
     fn __subscribe(driver_num: usize, subnum: usize, cb: usize, appdata: usize) -> isize;
     fn __command(driver_num: usize, cmdnum: usize, arg1: usize) -> isize;
@@ -303,7 +303,8 @@ pub fn rust_app() -> ! {
        println!("{:?}", end_count());
        // toggle_pin(0);
     //    time_repeat_sub(timer_cb);
-      
+      let a = TypedGPIO::new();
+      //a.enable_output(0);
       //   //  println!("hello");
       //  // let a = enable_pin(0);
       //  // println!("{:?}",a);
