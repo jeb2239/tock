@@ -51,6 +51,7 @@ impl<'a, G:GPIOPin> TypedGPIO<'a,G> {
     	let pins = self.pins.as_ref();
     	if data >= pins.len() {
                     -1
+                  
                 } else {
                     pins[data].set();
                     0
@@ -80,9 +81,61 @@ impl<'a, G:GPIOPin> TypedGPIO<'a,G> {
 
     }
 
-    fn enable_output(&self,index:usize,) ->isize {
+    fn enable_input(&self,index:usize,pin_config:InputMode) -> isize {
 
+                if index >= pins.len() {
+                    -1
+                } else {
+                   let err_code = self.configure_input_pin(index, pin_config);
+                   err_code
+                }
     }
+
+    fn read_input(index: usize) -> isize {
+         if data >= pins.len() {
+                    -1
+                } else {
+                    let pin_state = pins[data].read()
+                    pin_state as isize
+                }
+    }
+
+    fn enable_interrupt(index: usize,pin_config:usize,irq_config:usize) -> isize {
+        
+                //let pin_config = (data >>  8) & 0xFF;
+               // let irq_config = (data >> 16) & 0xFF;
+                if index >= pins.len() {
+                    -1
+                } else {
+                    let mut err_code = self.configure_input_pin(index, pin_config);
+                    if err_code == 0 {
+                        err_code = self.configure_interrupt(index, irq_config);
+                    }
+                    err_code
+                }
+    }
+
+    fn disable_interrupts(index: usize) -> isize {
+        if index >= pins.len() {    
+                    -1
+                } else {
+                    pins[index].disable_interrupt();
+                    pins[index].disable();
+                    0
+                }
+    }
+
+    fn disable(index:usize) -> isize {
+        if data >= pins.len() {
+                    -1
+                } else {
+                    pins[data].disable();
+                    0
+                }
+    }
+    //there is also no possibility of returning negative one
+
+
 
 
 }

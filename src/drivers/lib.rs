@@ -17,3 +17,4 @@ pub mod tmp006;
 pub mod spi;
 pub mod virtual_alarm;
 pub mod virtual_i2c;
+pub mod typed_gpio;
