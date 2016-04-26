@@ -10,6 +10,8 @@ use syscall;
 use core::raw::Slice;
 use core::ops::{Deref,DerefMut};
 use core::ptr::Unique;
+
+//use super::boxed::BoxMgr;
 #[allow(improper_ctypes)]
 extern {
     fn __allow(driver_num: usize, allownum: usize, ptr: *mut (), len: usize) -> isize;
@@ -267,8 +269,29 @@ pub fn wait() -> isize {
 
 
 
-pub fn rust_app() -> ! {
-          enable_pin(0);
+use super::boxed::BoxMgr;
+
+pub struct App {
+    pub memory: BoxMgr
+}
+
+pub fn init() {
+    print!("Welcome to Tock!\r\n");
+
+    let stats = (unsafe { &*super::app }).memory.stats();
+    print!("Memory Stats:{}\r\n", "");
+    print!("\tNum Allocated: {}\r\n", stats.num_allocated);
+    print!("\tNum Allocs: {}\r\n", stats.allocs);
+    print!("\tDrops: {}\r\n", stats.drops);
+    print!("\tAllocated Bytes: {}\r\n", stats.allocated_bytes);
+    print!("\tFree Bytes: {}\r\n", stats.free);
+    print!("\tActive: {}\r\n", stats.active);
+    
+}
+
+
+//pub fn rust_app() -> ! {
+   /*       enable_pin(0);
 
      /*    fn time_repeat_sub(cb:usize)-> isize{
              println!("{:?}","yo" );
@@ -283,10 +306,14 @@ pub fn rust_app() -> ! {
          }
 
          let timer_cb = timer_cb as usize;*/
-       // enable_output(0);
+       enable_pin(0);
 
        // println!("{:?}",add(3,1));
-       start_count();
+        start_count();
+        //for i in 0..300{
+        
+        toggle_pin(0);
+       // }
       // set_pin(0);
        println!("{:?}", end_count());
        // toggle_pin(0);
@@ -314,11 +341,12 @@ pub fn rust_app() -> ! {
       loop{
       wait(); // we make a syscal so this causes us to jump out of do process;
       }
+        */
         
 
       //  loop {
        //     wait();
         //}
 
-}
+//}
 

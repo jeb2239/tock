@@ -14,7 +14,6 @@ mod string;
 mod app;
 
 static mut app : *mut app::App = 0 as *mut app::App;
-
 #[link_section = ".text"]
 pub extern "C" fn _start(mem_start: *mut u8, mem_size: usize) {
     use core::mem::size_of;

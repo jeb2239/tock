@@ -11,8 +11,9 @@ extern crate platform;
 
 
 
-mod sched;
-mod app;
+pub mod boxed;
+pub mod sched;
+pub mod app;
 pub mod syscall;
 
 
@@ -22,6 +23,26 @@ extern {
 }
 
 /*rust app*/
+static mut app : *mut app::App = 0 as *mut app::App;
+
+pub fn rust_app(mem_start: *mut u8, mem_size: usize)->!{
+   // mem_start: *mut u8, mem_size: usize
+use core::mem::size_of;
+
+    let myapp = unsafe {
+        app = mem_start as *mut app::App;
+        &mut *app
+    };
+    let appsize = size_of::<app::App>();
+    myapp.memory = boxed::BoxMgr::new(mem_start, mem_size, appsize);
+
+    app::init();
+
+    loop {
+        app::wait();
+    }
+
+}
 
 
 #[no_mangle]
@@ -40,7 +61,7 @@ pub extern fn main() {
    
     //println!("{:?}", 4);
     let processes = unsafe {
-        process::process::PROCS = [Process::create(app::rust_app as *const usize)];
+        process::process::PROCS = [Process::create(rust_app as *const usize)];
         &mut process::process::PROCS
     };
 
