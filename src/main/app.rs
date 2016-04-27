@@ -1,6 +1,5 @@
 
 
-
 use platform::Firestorm;
 use process;
 use process::Process;
@@ -11,10 +10,10 @@ use syscall;
 use core::raw::Slice;
 use core::ops::{Deref,DerefMut};
 use core::ptr::Unique;
-use drivers::typedgpio;
+
+//use super::boxed::BoxMgr;
 #[allow(improper_ctypes)]
 extern {
-    fn __safe_call();
     fn __allow(driver_num: usize, allownum: usize, ptr: *mut (), len: usize) -> isize;
     fn __subscribe(driver_num: usize, subnum: usize, cb: usize, appdata: usize) -> isize;
     fn __command(driver_num: usize, cmdnum: usize, arg1: usize) -> isize;
@@ -29,15 +28,6 @@ pub fn start_count() -> isize {
     __start_count()
   }
 }
-
-pub fn safe_call() -> isize {
-    unsafe{
-        __safe_call()
-    }
-}
-
-
-
 
 
 
@@ -279,8 +269,30 @@ pub fn wait() -> isize {
 
 
 
-pub fn rust_app() -> ! {
-          enable_pin(0);
+use super::boxed::BoxMgr;
+
+pub struct App {
+    pub memory: BoxMgr,
+    pub platform: Firestorm
+}
+
+pub fn init() {
+    print!("Welcome to Tock!\r\n");
+
+    let stats = (unsafe { &*super::app }).memory.stats();
+    print!("Memory Stats:{}\r\n", "");
+    print!("\tNum Allocated: {}\r\n", stats.num_allocated);
+    print!("\tNum Allocs: {}\r\n", stats.allocs);
+    print!("\tDrops: {}\r\n", stats.drops);
+    print!("\tAllocated Bytes: {}\r\n", stats.allocated_bytes);
+    print!("\tFree Bytes: {}\r\n", stats.free);
+    print!("\tActive: {}\r\n", stats.active);
+    
+}
+
+
+//pub fn rust_app() -> ! {
+   /*       enable_pin(0);
 
      /*    fn time_repeat_sub(cb:usize)-> isize{
              println!("{:?}","yo" );
@@ -295,16 +307,19 @@ pub fn rust_app() -> ! {
          }
 
          let timer_cb = timer_cb as usize;*/
-       // enable_output(0);
+       enable_pin(0);
 
        // println!("{:?}",add(3,1));
-       start_count();
+        start_count();
+        //for i in 0..300{
+        
+        toggle_pin(0);
+       // }
       // set_pin(0);
        println!("{:?}", end_count());
        // toggle_pin(0);
     //    time_repeat_sub(timer_cb);
-      let a = TypedGPIO::new();
-      //a.enable_output(0);
+      
       //   //  println!("hello");
       //  // let a = enable_pin(0);
       //  // println!("{:?}",a);
@@ -327,11 +342,12 @@ pub fn rust_app() -> ! {
       loop{
       wait(); // we make a syscal so this causes us to jump out of do process;
       }
+        */
         
 
       //  loop {
        //     wait();
         //}
 
-}
+//}
 

@@ -38,7 +38,7 @@ pub struct Firestorm {
     isl29035: &'static drivers::isl29035::Isl29035<'static>,
     spi: &'static drivers::spi::Spi<'static, sam4l::spi::Spi>,
     nrf51822: &'static drivers::nrf51822_serialization::Nrf51822Serialization<'static, sam4l::usart::USART>,
-    typedgpio: &'static drivers::typedgpio::TypedGPIO<'static,sam4l::gpio::GPIOPin>
+    pub typedgpio: &'static drivers::typedgpio::TypedGPIO<'static,sam4l::gpio::GPIOPin>
 }
 
 impl Firestorm {
@@ -63,6 +63,7 @@ impl Firestorm {
             4 => f(Some(self.spi)),
             5 => f(Some(self.nrf51822)),
             6 => f(Some(self.isl29035)),
+            
             _ => f(None)
         }
     }
@@ -100,13 +101,14 @@ pub fn end_count() -> isize {
 
 pub unsafe fn init<'a>() -> &'a mut Firestorm {
     use core::mem;
-
+    
     // Workaround for SB.02 hardware bug
     // TODO(alevy): Get rid of this when we think SB.02 are out of circulation
     sam4l::gpio::PA[14].enable();
     sam4l::gpio::PA[14].set();
     sam4l::gpio::PA[14].enable_output();
 
+    
     static_init!(console : drivers::console::Console<sam4l::usart::USART> =
                     drivers::console::Console::new(&sam4l::usart::USART3,
                                        &mut drivers::console::WRITE_BUF));
@@ -182,11 +184,22 @@ pub unsafe fn init<'a>() -> &'a mut Firestorm {
             &sam4l::gpio::PA[13], // P8
             &sam4l::gpio::PA[17], // STORM_INT (nRF51822)
             ]);
+    static_init!(typedgpio : drivers::typedgpio::TypedGPIO<'static,sam4l::gpio::GPIOPin> = 
+                    drivers::typedgpio::TypedGPIO::new(gpio_pins));
+                    for pin in gpio_pins.iter() {
+                        pin.set_client(typedgpio);
+    }
+    
+    //static_init!(typedgpio);
+                    
     static_init!(gpio : drivers::gpio::GPIO<'static, sam4l::gpio::GPIOPin> =
                  drivers::gpio::GPIO::new(gpio_pins));
     for pin in gpio_pins.iter() {
         pin.set_client(gpio);
     }
+    
+    //static_init!(gpio)
+    
 
     /* Note: The following GPIO pins aren't assigned to anything:
     &sam4l::gpio::PC[19] // !ENSEN
@@ -204,6 +217,7 @@ pub unsafe fn init<'a>() -> &'a mut Firestorm {
         isl29035: isl29035,
         spi: spi,
         nrf51822: nrf_serialization,
+        typedgpio: typedgpio
     });
 
     sam4l::usart::USART3.configure(sam4l::usart::USARTParams {
