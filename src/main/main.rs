@@ -37,6 +37,7 @@ use core::mem::size_of;
     let appsize = size_of::<app::App>();
     myapp.memory = boxed::BoxMgr::new(mem_start, mem_size, appsize);
     
+    
     app::init();
 
     loop {

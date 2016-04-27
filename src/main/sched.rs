@@ -79,6 +79,9 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                 });
                 process.set_r0(res);
             }
+            Some(syscall::SAFE) => {
+                
+            }
             
             _ => {}
         }
