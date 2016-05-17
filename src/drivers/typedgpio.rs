@@ -97,6 +97,7 @@ impl<'a, G:GPIOPin> TypedGPIO<'a,G> {
    pub fn read_input(&self,index: usize) -> isize {
         let pins = self.pins.as_ref();
          if index >= pins.len() {
+                    
                     -1
                 } else {
                     let pin_state = pins[index].read();

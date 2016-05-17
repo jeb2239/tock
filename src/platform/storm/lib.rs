@@ -50,8 +50,8 @@ impl Firestorm {
         self.chip.has_pending_interrupts()
     }
 /*
-
 */
+
     pub fn with_driver<F, R>(&mut self, driver_num: usize, f: F) -> R where
             F: FnOnce(Option<&hil::Driver>) -> R {
 

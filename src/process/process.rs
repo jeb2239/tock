@@ -301,7 +301,7 @@ impl<'a> Process<'a> {
         volatile_store(stack_bottom.offset(1), callback.r1);
         volatile_store(stack_bottom.offset(2), callback.r2);
         volatile_store(stack_bottom.offset(3), callback.r3);
-
+        
         self.cur_stack = stack_bottom as *mut u8;
         self.switch_to();
     }

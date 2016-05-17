@@ -14,6 +14,7 @@ use core::ptr::Unique;
 //use super::boxed::BoxMgr;
 #[allow(improper_ctypes)]
 extern {
+    fn __safe_call(driver_num:usize , ptr: *mut ()) -> isize;
     fn __allow(driver_num: usize, allownum: usize, ptr: *mut (), len: usize) -> isize;
     fn __subscribe(driver_num: usize, subnum: usize, cb: usize, appdata: usize) -> isize;
     fn __command(driver_num: usize, cmdnum: usize, arg1: usize) -> isize;
@@ -75,6 +76,15 @@ pub fn toggle_pin(pin: usize) -> isize {
 pub fn wait() -> isize {
     unsafe {
         __wait()
+    }
+}
+
+pub fn svc()  {
+    unsafe{
+       asm!("push {r4-r11}
+            svc 5
+            pop {r4-r11}
+            ");
     }
 }
 // pub fn enable_tmp006() {
@@ -272,8 +282,8 @@ pub fn wait() -> isize {
 use super::boxed::BoxMgr;
 
 pub struct App {
-    pub memory: BoxMgr,
-    pub platform: Firestorm
+    pub memory: BoxMgr
+    
 }
 
 pub fn init() {
@@ -284,9 +294,22 @@ pub fn init() {
     print!("\tNum Allocated: {}\r\n", stats.num_allocated);
     print!("\tNum Allocs: {}\r\n", stats.allocs);
     print!("\tDrops: {}\r\n", stats.drops);
+    enable_pin(0);
+    start_count();
+    
+    for i in 0..100 {
+    //svc();
+    set_pin(0);
+   // clear_pin(0);
+    }
+    
+    let a = end_count();
+    print!("Clock Cycles for svc : {}\r\n",a);
     print!("\tAllocated Bytes: {}\r\n", stats.allocated_bytes);
     print!("\tFree Bytes: {}\r\n", stats.free);
     print!("\tActive: {}\r\n", stats.active);
+    
+    
     
 }
 

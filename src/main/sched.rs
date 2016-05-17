@@ -6,12 +6,14 @@ use common::Queue;
 use hil;
 use syscall;
 
+
 pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                   appid: AppId) {
     loop {
         match process.state {  //so here we have to check the state of the process running
             process::State::Running => {
                 process.switch_to();
+               // println!("heyy"); // when you do inline asm do not bx lr at the end or you will hard fault
             }
             process::State::Waiting => {
                 match process.callbacks.dequeue() {
@@ -19,6 +21,8 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                     Some(cb) => {
                         process.state = process::State::Running;
                         process.switch_to_callback(cb);
+                        
+                        
                     }
                 }
             }
@@ -33,7 +37,7 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                 let driver_num = process.r0();
                 let subdriver_num = process.r1();// ----- in stead of passing in a number, just pass in a pointer to the driver 
                                                 //function
-                                                
+                           
                 let callback_ptr = process.r2() as *mut ();
                 let appdata = process.r3();
                 println!("{:?}",driver_num);
@@ -52,6 +56,7 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                 process.set_r0(res);
             },
             Some(syscall::COMMAND) => {
+                //println!("Hello");
                 let res = platform.with_driver(process.r0(), |driver| {
                     match driver {
                         Some(d) => d.command(process.r1(),
@@ -78,12 +83,19 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                     }
                 });
                 process.set_r0(res);
-            }
+            },
             Some(syscall::SAFE) => {
+                    //println!("hello");
+                    
+                    platform.typedgpio.enable_output(0);
+                    platform.typedgpio.set_pin(0);
+                    
+                  
                 
+                  
             }
-            
-            _ => {}
-        }
+            _ => {println!("end of the line"); }
+        
+    }
     }
 }

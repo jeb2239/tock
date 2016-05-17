@@ -1,4 +1,4 @@
-#![feature(core_str_ext,core_slice_ext,const_fn,no_std,raw,core_char_ext,unique,slice_bytes)]
+#![feature(core_str_ext,core_slice_ext,const_fn,no_std,raw,core_char_ext,unique,slice_bytes,asm)]
 #![no_main]
 #![no_std]
 
@@ -41,6 +41,7 @@ use core::mem::size_of;
     app::init();
 
     loop {
+        
         app::wait();
     }
 
@@ -51,7 +52,7 @@ pub extern fn main() {
     use process::Process;
     use process::AppId;
     
-    app.platform = unsafe {
+    let mut platform = unsafe {
         platform::init()
     };
    
@@ -69,19 +70,19 @@ pub extern fn main() {
     loop {
         unsafe {
            // println!("{:?}", 30);
-            app.platform.service_pending_interrupts();//handle everything that wants to interrupt us 
+            platform.service_pending_interrupts();//handle everything that wants to interrupt us 
 
             for (i, p) in processes.iter_mut().enumerate() { //in here we have process 
                 p.as_mut().map(|process| {
             //        println!("{:?}",process.exposed_memory_start);
-
-                    sched::do_process(app.platform, process, AppId::new(i));
-
+                    
+                    sched::do_process(platform, process, AppId::new(i));
+                    
                 });
             }
 
             support::atomic(|| {
-                if !app.platform.has_pending_interrupts() {
+                if !platform.has_pending_interrupts() {
              //       println!("{:?}", 20);
                     support::wfi();
                 }
