@@ -17,6 +17,7 @@ pub mod app;
 pub mod syscall;
 pub mod console;
 pub mod string;
+pub mod syscalls;
 
 
 

@@ -12,11 +12,8 @@ fn write_done(_:usize,_ :usize, strptr: *mut String) -> isize {
     unsafe { 
         mem::drop(Box::<String>::from_raw(strptr));
     }
-    WRITE_DONE_TOKEN
-    
-    
+    WRITE_DONE_TOKEN   
 }
-
 
 macro_rules! print {
     ($str:expr) => (puts(String::new($str)));
@@ -34,6 +31,11 @@ pub fn print(args: fmt::Arguments ){
 pub fn puts(string: String){
     
     let bx = Box::new(string);
+    
+}
+
+#[allow(dead_code)]
+pub fn putc(c: u8){
     
 }
 
