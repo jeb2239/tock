@@ -25,7 +25,7 @@ pub extern "C" fn _start(mem_start: *mut u8, mem_size: usize) {
     };
     let appsize = size_of::<app::App>();
     myapp.memory = boxed::BoxMgr::new(mem_start, mem_size, appsize);
-
+    
     app::init();
 
     loop {

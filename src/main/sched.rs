@@ -31,6 +31,7 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
             Some(syscall::WAIT) => {
                 process.state = process::State::Waiting;
                 process.pop_syscall_stack();
+                
                 break;
             },
             Some(syscall::SUBSCRIBE) => {

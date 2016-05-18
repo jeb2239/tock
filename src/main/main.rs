@@ -12,10 +12,12 @@ extern crate drivers;
 
 
 pub mod boxed;
-
 pub mod sched;
 pub mod app;
 pub mod syscall;
+pub mod console;
+pub mod string;
+
 
 
 #[allow(improper_ctypes)]

@@ -15,5 +15,6 @@ pub fn init() {
     print!("\tAllocated Bytes: {}\r\n", stats.allocated_bytes);
     print!("\tFree Bytes: {}\r\n", stats.free);
     print!("\tActive: {}\r\n", stats.active);
+    
 }
 
