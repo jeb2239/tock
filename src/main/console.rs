@@ -1,6 +1,7 @@
 use core::mem;
 use super::boxed::Box;
 use syscall;
+use syscalls;
 use super::string::String;
 use core::fmt::{self, Write};
 
@@ -36,7 +37,18 @@ pub fn puts(string: String){
 
 #[allow(dead_code)]
 pub fn putc(c: u8){
-    
+    syscalls::command(0, 0, c as usize);
+}
+
+#[allow(dead_code)]
+pub fn subscribe_read_line(buf: *mut u8, len: usize,
+                           f: fn(usize, *mut u8)) -> isize {
+    let res =  syscalls::allow(0, 0, buf as *mut (), len);
+    if res < 0 {
+        res
+    } else {
+        syscalls::subscribe(0, 0, f as usize, 0)
+    }
 }
 
 

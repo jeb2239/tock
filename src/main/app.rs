@@ -1,5 +1,3 @@
-
-
 use platform::Firestorm;
 use process;
 use process::Process;
@@ -45,7 +43,7 @@ pub fn init() {
     print!("\tDrops: {}\r\n", stats.drops);
     syscalls::enable_pin(0);
     syscalls::start_count();
-    
+    console::puts(String::new("Hello!"));
     for i in 0..100 {
     //svc();
     syscalls::set_pin(0);

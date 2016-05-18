@@ -45,7 +45,7 @@ use core::mem::size_of;
 
     loop {
         
-        app::wait();
+        syscalls::wait();
     }
 
 }
