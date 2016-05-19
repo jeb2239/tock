@@ -16,12 +16,12 @@ fn write_done(_:usize,_ :usize, strptr: *mut String) -> isize {
     WRITE_DONE_TOKEN   
 }
 #[macro_export]
-macro_rules! print {
+macro_rules! print_as {
     ($str:expr) => (puts(String::new($str)));
-    ($fmt:expr, $($arg:tt)*) => (print(format_args!($fmt,$($arg)*)));
+    ($fmt:expr, $($arg:tt)*) => (print_async(format_args!($fmt,$($arg)*)));
 }
 
-pub fn print(args: fmt::Arguments ){
+pub fn print_async(args: fmt::Arguments ){
     use core::fmt::Write;
     let mut string = String::new("");
     let _ = string.write_fmt(args);

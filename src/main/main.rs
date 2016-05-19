@@ -9,13 +9,12 @@ extern crate process;
 extern crate platform;
 extern crate drivers;
 
-
+#[macro_use]
+pub mod console;
 pub mod boxed;
 pub mod sched;
 pub mod app;
 pub mod syscall;
-#[macro_use]
-pub mod console;
 pub mod string;
 pub mod syscalls;
 

@@ -9,7 +9,7 @@ use core::raw::Slice;
 use core::ops::{Deref,DerefMut};
 use core::ptr::Unique;
 #[macro_use]
-use super::console;
+use console::*;
 use super::string;
 use syscalls;
 //use super::boxed::BoxMgr;
@@ -48,8 +48,8 @@ pub struct App {
 }
 
 pub fn init() {
-    print!("Welcome to Tock!\r\n");
-
+    print_as!("Welcome to Tock!\r\n");
+    
     let stats = (unsafe { &*super::app }).memory.stats();
     print!("Memory Stats:{}\r\n", "");
     print!("\tNum Allocated: {}\r\n", stats.num_allocated);
