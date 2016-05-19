@@ -20,7 +20,7 @@ pub fn print(args: ::core::fmt::Arguments) {
     let mut string = String::new("");
     let _ = string.write_fmt(args);
     puts(string);
-}
+}   
 
 pub fn puts(string: String) {
     allow(0, 1, string.as_str() as *const str as *mut (), string.len());

@@ -51,6 +51,7 @@ pub fn init() {
     print_as!("Welcome to Tock!\r\n");
     
     let stats = (unsafe { &*super::app }).memory.stats();
+    
     print!("Memory Stats:{}\r\n", "");
     print!("\tNum Allocated: {}\r\n", stats.num_allocated);
     print!("\tNum Allocs: {}\r\n", stats.allocs);
