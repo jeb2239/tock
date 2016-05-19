@@ -8,20 +8,34 @@ use syscall;
 use core::raw::Slice;
 use core::ops::{Deref,DerefMut};
 use core::ptr::Unique;
-use console;
-use string;
+#[macro_use]
+use super::console;
+use super::string;
 use syscalls;
 //use super::boxed::BoxMgr;
 
 
-pub fn svc()  {
-    unsafe{
-       asm!("push {r4-r11}
-            svc 5
-            pop {r4-r11}
-            ");
-    }
-}
+// pub fn svc5()  {
+//     unsafe{
+//        asm!("push {r4-r11}
+//             svc 5
+//             pop {r4-r11}
+//             ");
+//     }
+// }
+
+// pub fn svc6(){
+//     unsafe{
+//         asm!(
+//             "
+//             push {r4-r11}
+//             svc 6
+//             pop {r4-r11}
+//             "
+//         );
+//     }
+// }
+
 
 
 
@@ -41,21 +55,9 @@ pub fn init() {
     print!("\tNum Allocated: {}\r\n", stats.num_allocated);
     print!("\tNum Allocs: {}\r\n", stats.allocs);
     print!("\tDrops: {}\r\n", stats.drops);
-    syscalls::enable_pin(0);
-    syscalls::start_count();
-    console::puts(String::new("Hello!"));
-    for i in 0..100 {
-    //svc();
-    syscalls::set_pin(0);
-   // clear_pin(0);
-    }
-    
-    let a = syscalls::end_count();
-    print!("Clock Cycles for svc : {}\r\n",a);
     print!("\tAllocated Bytes: {}\r\n", stats.allocated_bytes);
     print!("\tFree Bytes: {}\r\n", stats.free);
     print!("\tActive: {}\r\n", stats.active);
-    
     
     
 }

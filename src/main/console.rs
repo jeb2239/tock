@@ -15,7 +15,7 @@ fn write_done(_:usize,_ :usize, strptr: *mut String) -> isize {
     }
     WRITE_DONE_TOKEN   
 }
-
+#[macro_export]
 macro_rules! print {
     ($str:expr) => (puts(String::new($str)));
     ($fmt:expr, $($arg:tt)*) => (print(format_args!($fmt,$($arg)*)));
@@ -31,23 +31,27 @@ pub fn print(args: fmt::Arguments ){
 
 pub fn puts(string: String){
     
+    syscalls::allow(0, 1, string.as_str() as *const str as *mut (), string.len());
     let bx = Box::new(string);
+    syscalls::subscribe(0, 1, write_done as usize, bx.raw() as usize);
+    mem::forget(bx);
+    while syscalls::wait() != WRITE_DONE_TOKEN {}
     
 }
 
 #[allow(dead_code)]
 pub fn putc(c: u8){
-    syscalls::command(0, 0, c as usize);
+    syscalls::command(0, 1, c as usize);
 }
 
 #[allow(dead_code)]
 pub fn subscribe_read_line(buf: *mut u8, len: usize,
                            f: fn(usize, *mut u8)) -> isize {
-    let res =  syscalls::allow(0, 0, buf as *mut (), len);
+    let res =  syscalls::allow(0, 1, buf as *mut (), len);
     if res < 0 {
         res
     } else {
-        syscalls::subscribe(0, 0, f as usize, 0)
+        syscalls::subscribe(0, 1, f as usize, 0)
     }
 }
 

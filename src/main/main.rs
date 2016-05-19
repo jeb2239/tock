@@ -1,7 +1,6 @@
 #![feature(core_str_ext,core_slice_ext,const_fn,no_std,raw,core_char_ext,unique,slice_bytes,asm)]
 #![no_main]
 #![no_std]
-
 extern crate common;
 extern crate support;
 extern crate hil;
@@ -15,6 +14,7 @@ pub mod boxed;
 pub mod sched;
 pub mod app;
 pub mod syscall;
+#[macro_use]
 pub mod console;
 pub mod string;
 pub mod syscalls;
