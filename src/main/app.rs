@@ -48,10 +48,10 @@ pub struct App {
 }
 
 pub fn init() {
-    print_as!("Welcome to Tock!\r\n");
-    
+    print!("Welcome to Tock!\r\n");
+    let a = String::new("Heyy");
     let stats = (unsafe { &*super::app }).memory.stats();
-    
+    puts(a);
     print!("Memory Stats:{}\r\n", "");
     print!("\tNum Allocated: {}\r\n", stats.num_allocated);
     print!("\tNum Allocs: {}\r\n", stats.allocs);

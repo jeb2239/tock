@@ -3,6 +3,7 @@ use hil::{AppId,Driver,Callback,AppSlice,Shared,NUM_PROCS};
 use hil::uart::{UART, Client};
 
 
+
 struct App {
     read_callback: Option<Callback>,
     write_callback: Option<Callback>,
@@ -99,7 +100,7 @@ impl<'a, U: UART> Driver for Console<'a, U> {
                 0
             },
             1 /* putstr/write_done */ => {  /* need to move this code and do a combo of this */
-            print
+                
                 let result = self.apps[callback.app_id().idx()].map(|app| {
                     match app.write_buffer.take() {
                         Some(slice) => {
