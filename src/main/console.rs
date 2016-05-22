@@ -36,9 +36,12 @@ pub fn puts(string: String){
   //  println!("hell0");
     syscalls::subscribe(0, 1, write_done as usize, bx.raw() as usize);
     mem::forget(bx);
-    //   println!("hell0");
+   // let a =  syscalls::wait();
+      println!("hell0");
    // loop{}
-    while syscalls::wait() != WRITE_DONE_TOKEN {}
+ // println!("{}",a);
+    
+   // while syscalls::wait() != WRITE_DONE_TOKEN {}
     
     
 }

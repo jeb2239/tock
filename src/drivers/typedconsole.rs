@@ -40,7 +40,7 @@ impl<'a, U: UART> Driver for Console<'a, U> {
              allow_num: usize, slice: AppSlice<Shared, u8>) -> isize {
         let app = appid.idx();
         match allow_num {
-            0 => {
+            0 => { //read
                 let resapp = match self.apps[app].take() {
                     Some(mut app) => {
                         app.read_buffer = Some(slice);
@@ -59,7 +59,7 @@ impl<'a, U: UART> Driver for Console<'a, U> {
                 self.apps[app].replace(resapp);
                 0
             },
-            1 => {
+            1 => { //write
                 let resapp = match self.apps[app].take() {
                     Some(mut app) => {
                         app.write_buffer = Some(slice);

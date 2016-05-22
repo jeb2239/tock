@@ -5,10 +5,17 @@ use process::{AppSlice,AppId};
 use common::Queue;
 use hil;
 use syscall;
+use app;
 
+pub fn set_led(platform: &mut Firestorm, process: &mut Process, appid: AppId){
+    platform.typedgpio.enable_output(0);
+    platform.typedgpio.set_pin(0);
+}
 
 pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
-                  appid: AppId) {
+                  appid: AppId,f:fn(&mut Firestorm, &mut Process, AppId)) {
+                    
+          
     loop {
         match process.state {  //so here we have to check the state of the process running
             process::State::Running => {
@@ -19,6 +26,8 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                 match process.callbacks.dequeue() {
                     None => { return },
                     Some(cb) => {
+                        println!("yooyoyoyo");
+                        
                         process.state = process::State::Running;
                         process.switch_to_callback(cb);
                         
@@ -29,6 +38,7 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
         }
         match process.svc_number() {
             Some(syscall::WAIT) => {
+                println!("heyfool");
                 process.state = process::State::Waiting;
                 process.pop_syscall_stack();
                 
@@ -86,10 +96,11 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                 process.set_r0(res);
             },
             Some(syscall::SAFE) => {
-                    //println!("hello");
+                    println!("hellothayre");
                     
-                    platform.typedgpio.enable_output(0);
-                    platform.typedgpio.set_pin(0);
+                    f(platform,process,appid);
+                    
+                    
                     
                   
                 

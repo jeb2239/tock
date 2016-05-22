@@ -10,7 +10,7 @@
 .global __allow
 .global __subscribe
 .global __command
-
+.global to_kernel
 .thumb_func
 SVC_Handler:
   cmp lr, #0xfffffff9

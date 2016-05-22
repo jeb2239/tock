@@ -41,7 +41,7 @@ use core::mem::size_of;
     
     
     app::init();
-
+    
     loop {
         
         syscalls::wait();
@@ -59,9 +59,10 @@ pub extern fn main() {
     };
    
      // println!("{:?}",40 );
+    
       
-        
-
+    //(unsafe { &mut *app}).system_call;
+    
    
     //println!("{:?}", 4);
     let processes = unsafe {
@@ -73,19 +74,20 @@ pub extern fn main() {
         unsafe {
            // println!("{:?}", 30);
             platform.service_pending_interrupts();//handle everything that wants to interrupt us 
-
+            println!("{:?}",(unsafe { &mut *app}).val);
             for (i, p) in processes.iter_mut().enumerate() { //in here we have process 
                 p.as_mut().map(|process| {
-            //        println!("{:?}",process.exposed_memory_start);
-                    
-                    sched::do_process(platform, process, AppId::new(i));
-                    
+                
+                     println!("{:?}",(unsafe { &mut *app}).val); 
+                    sched::do_process(platform, process, AppId::new(i),(unsafe {&mut * app}).system_call);
+                   
                 });
             }
 
             support::atomic(|| {
                 if !platform.has_pending_interrupts() {
              //       println!("{:?}", 20);
+                   
                     support::wfi();
                 }
             })
