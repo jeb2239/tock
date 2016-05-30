@@ -13,16 +13,16 @@ struct App {
 
 pub static mut WRITE_BUF : [u8; 64] = [0; 64];
 
-pub struct Console<'a, U: UART + 'a> {
+pub struct TypedConsole<'a, U: UART + 'a> {
     uart: &'a U,
     apps: [TakeCell<App>; NUM_PROCS],
     buffer: TakeCell<&'static mut [u8]>
 }
 
-impl<'a, U: UART> Console<'a, U> {
+impl<'a, U: UART> TypedConsole<'a, U> {
     pub const fn new(uart: &'a U, buffer: &'static mut [u8])
-            -> Console<'a, U> {
-        Console {
+            -> TypedConsole<'a, U> {
+        TypedConsole {
             uart: uart,
             apps: [TakeCell::empty()],
             buffer: TakeCell::new(buffer)
@@ -35,7 +35,20 @@ impl<'a, U: UART> Console<'a, U> {
     }
 }
 
-impl<'a, U: UART> Driver for Console<'a, U> {
+//there is allow read and allow write 
+//here we just pass in a buffer
+impl<'a,U:UART> TypedConsole<'a , U>{
+
+pub fn puts(&self,appid: AppId, 
+allow_num:usize, 
+slice: AppSlice<Shared,u8>,callback:Callback )-> isize{
+    
+   self.allow(appid,allow_num,slice);
+   self.subscribe(1,callback)
+}
+
+}
+impl<'a, U: UART>  TypedConsole<'a, U> {
     fn allow(&self, appid: AppId,
              allow_num: usize, slice: AppSlice<Shared, u8>) -> isize {
         let app = appid.idx();
@@ -135,7 +148,7 @@ fn each_some<'a, T, I, F>(lst: I, mut f: F)
     }
 }
 
-impl<'a, U: UART> Client for Console<'a, U> {
+impl<'a, U: UART> Client for TypedConsole<'a, U> {
     fn write_done(&self, buffer: &'static mut [u8]) {
         self.buffer.replace(buffer);
         self.apps[0].map(|app| {

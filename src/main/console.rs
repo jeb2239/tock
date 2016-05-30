@@ -28,7 +28,9 @@ pub fn print_async(args: fmt::Arguments ){
     puts(string);
 }
 
-
+//take this model and push this down to the driver level
+//we will already be in the kernel so this will cost one context switch
+// instead of two
 pub fn puts(string: String){
     
     syscalls::allow(0, 1, string.as_str() as *const str as *mut (), string.len());
@@ -37,11 +39,11 @@ pub fn puts(string: String){
     syscalls::subscribe(0, 1, write_done as usize, bx.raw() as usize);
     mem::forget(bx);
    // let a =  syscalls::wait();
-      println!("hell0");
+    //  println!("hell0");
    // loop{}
  // println!("{}",a);
     
-   // while syscalls::wait() != WRITE_DONE_TOKEN {}
+    while syscalls::wait() == WRITE_DONE_TOKEN {}
     
     
 }

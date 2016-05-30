@@ -354,6 +354,10 @@ impl<'a> Process<'a> {
         let pspr = self.cur_stack as *const usize;
         unsafe { volatile_load(pspr.offset(3)) }
     }
+    
+   /* pub fn r4(&self) -> usize {
+        let pspr = self.cur_stack as
+    }*/
 
 }
 

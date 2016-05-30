@@ -30,6 +30,17 @@ impl String {
             mem::transmute((*self.bx.raw()).repr())
         }
     }
+    
+    pub unsafe fn as_ptr(&self) -> *const u8 {
+        use core::mem;
+        use core::raw;
+        //unsafe {
+            self.bx.raw() as *const u8
+       // }
+    }
+    
+    
+    
 }
 
 impl Write for String {

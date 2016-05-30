@@ -10,6 +10,7 @@
 .global __allow
 .global __subscribe
 .global __command
+.global __safe_call
 .global to_kernel
 .thumb_func
 SVC_Handler:
@@ -75,10 +76,11 @@ __command:
 
 .thumb_func
 __safe_call:
-  push {r4-r11}
+  push {r6-r11}
   svc 5
-  pop {r4-r11}
+  pop {r6-r11}
   bx lr
+
   
 
 

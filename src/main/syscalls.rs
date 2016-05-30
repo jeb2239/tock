@@ -1,6 +1,6 @@
 #[allow(improper_ctypes)]
 extern {
-    fn __safe_call(driver_num:usize , ptr: *mut ()) -> isize;
+    fn __safe_call(driver_num: usize, subnum: usize, cb: usize, appdata: usize ) -> isize;
     fn __allow(driver_num: usize, allownum: usize, ptr: *mut (), len: usize) -> isize;
     fn __subscribe(driver_num: usize, subnum: usize, cb: usize, appdata: usize) -> isize;
     fn __command(driver_num: usize, cmdnum: usize, arg1: usize) -> isize;
@@ -26,6 +26,11 @@ pub fn end_count() -> isize {
   }
 }
 
+pub fn safe_call(driver_num: usize, subnum: usize, cb: usize, appdata: usize) -> isize {
+    unsafe{
+        __safe_call(driver_num, subnum, cb, appdata)
+    }
+}
 pub fn allow(driver_num: usize, allownum: usize, ptr: *mut (), len: usize) -> isize {
     unsafe {
       __allow(driver_num, allownum, ptr, len)

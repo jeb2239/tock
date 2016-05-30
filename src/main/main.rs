@@ -37,10 +37,11 @@ use core::mem::size_of;
         &mut *app
     };
     let appsize = size_of::<app::App>();
+    
     myapp.memory = boxed::BoxMgr::new(mem_start, mem_size, appsize);
     
     
-    app::init();
+    app::init(mem_start as usize);
     
     loop {
         
@@ -74,11 +75,11 @@ pub extern fn main() {
         unsafe {
            // println!("{:?}", 30);
             platform.service_pending_interrupts();//handle everything that wants to interrupt us 
-            println!("{:?}",(unsafe { &mut *app}).val);
+        //    println!("{:?}",(unsafe { &mut *app}).val);
             for (i, p) in processes.iter_mut().enumerate() { //in here we have process 
                 p.as_mut().map(|process| {
                 
-                     println!("{:?}",(unsafe { &mut *app}).val); 
+         //            println!("{:?}",(unsafe { &mut *app}).val); 
                     sched::do_process(platform, process, AppId::new(i),(unsafe {&mut * app}).system_call);
                    
                 });

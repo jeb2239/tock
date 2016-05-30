@@ -17,14 +17,7 @@ use sched;
 //use super::boxed::BoxMgr;
 
 
-/*pub fn svc5()  {
-    unsafe{
-       asm!("push {r4-r11}
-            svc 5
-            pop {r4-r11}
-            ");
-    }
-}*/
+
 
 
 // pub fn svc6(){
@@ -45,28 +38,51 @@ use sched;
 use super::boxed::BoxMgr;
 use super::string::String;
 
+
+
+
+pub fn svc5(f:usize)  {
+    
+    
+    
+    unsafe{
+       asm!("push {r4-r11}
+            svc 5
+            pop {r4-r11}
+            ");
+    }
+}
+
 pub struct App {
     pub memory: BoxMgr,
     pub system_call : fn(&mut Firestorm, &mut Process, AppId) ,
-    pub val : usize
+    
+    
 }
 
-pub fn init() {
-    print!("Welcome to Tock!\r\n");
-    let a = String::new("Heyy");
-    let stats = (unsafe { &*super::app }).memory.stats();
-   // print_as!("haye");
-   // (unsafe { &mut *super::app}).system_call = sched::set_led;
-    (unsafe {&mut *super::app}).val = 14;
-    (unsafe {&mut *super::app}).system_call = sched::set_led;
+pub fn init(g:usize) {
+   // print_as!("Welcome to Tock!\r\n");
+   
+    let a = String::new("Heyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
     
-    print!("Memory Stats:{}\r\n", "");
-    print!("\tNum Allocated: {}\r\n", stats.num_allocated);
-    print!("\tNum Allocs: {}\r\n", stats.allocs);
-    print!("\tDrops: {}\r\n", stats.drops);
-    print!("\tAllocated Bytes: {}\r\n", stats.allocated_bytes);
-    print!("\tFree Bytes: {}\r\n", stats.free);
-    print!("\tActive: {}\r\n", stats.active);
+   let g= g as *mut u8;
+    print!("{:?}\r\n",unsafe { (a.as_ptr() as usize) - (g as usize) } );
+    let stats = (unsafe { &*super::app }).memory.stats();
+    
+    print!("\tNum Allocated: {:?}\r\n", a.len());
+   // print_as!("haye");
+   
+   (unsafe { &mut *super::app}).system_call = sched::set_led;//the pc
+   // let a = sched::set_led as usize;
+    
+    syscalls::safe_call(3,4,sched::set_led as usize,3);
+    
+ //   print!("\tNum Allocated: {}\r\n", stats.num_allocated);
+    // print!("\tNum Allocs: {}\r\n", stats.allocs);
+    // print!("\tDrops: {}\r\n", stats.drops);
+    // print!("\tAllocated Bytes: {}\r\n", stats.allocated_bytes);
+    // print!("\tFree Bytes: {}\r\n", stats.free);
+    // print!("\tActive: {}\r\n", stats.active);
     
     
 }

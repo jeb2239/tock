@@ -38,7 +38,8 @@ pub struct Firestorm {
     isl29035: &'static drivers::isl29035::Isl29035<'static>,
     spi: &'static drivers::spi::Spi<'static, sam4l::spi::Spi>,
     nrf51822: &'static drivers::nrf51822_serialization::Nrf51822Serialization<'static, sam4l::usart::USART>,
-    pub typedgpio: &'static drivers::typedgpio::TypedGPIO<'static,sam4l::gpio::GPIOPin>
+    pub typedgpio: &'static drivers::typedgpio::TypedGPIO<'static,sam4l::gpio::GPIOPin>,
+    pub typedconsole: &'static drivers::typedconsole::TypedConsole<'static,sam4l::usart::USART>
 }
 
 impl Firestorm {
@@ -63,7 +64,6 @@ impl Firestorm {
             4 => f(Some(self.spi)),
             5 => f(Some(self.nrf51822)),
             6 => f(Some(self.isl29035)),
-            
             _ => f(None)
         }
     }
@@ -108,12 +108,14 @@ pub unsafe fn init<'a>() -> &'a mut Firestorm {
     sam4l::gpio::PA[14].set();
     sam4l::gpio::PA[14].enable_output();
 
-    
+    static_init!(typedconsole : drivers::typedconsole::TypedConsole<sam4l::usart::USART> =
+                    drivers::typedconsole::TypedConsole::new(&sam4l::usart::USART3,
+                                       &mut drivers::typedconsole::WRITE_BUF));
     static_init!(console : drivers::console::Console<sam4l::usart::USART> =
                     drivers::console::Console::new(&sam4l::usart::USART3,
                                        &mut drivers::console::WRITE_BUF));
     sam4l::usart::USART3.set_client(console);
-
+    sam4l::usart::USART3.set_client(typedconsole);
     // Create the Nrf51822Serialization driver for passing BLE commands
     // over UART to the nRF51822 radio.
     static_init!(nrf_serialization : drivers::nrf51822_serialization::Nrf51822Serialization<sam4l::usart::USART> =
@@ -217,7 +219,8 @@ pub unsafe fn init<'a>() -> &'a mut Firestorm {
         isl29035: isl29035,
         spi: spi,
         nrf51822: nrf_serialization,
-        typedgpio: typedgpio
+        typedgpio: typedgpio,
+        typedconsole: typedconsole
     });
 
     sam4l::usart::USART3.configure(sam4l::usart::USARTParams {

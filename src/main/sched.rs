@@ -1,16 +1,26 @@
 use platform::Firestorm;
 use process;
 use process::Process;
-use process::{AppSlice,AppId};
+use process::{AppSlice,AppId,Callback};
 use common::Queue;
+
+use hil::{Shared};
 use hil;
 use syscall;
 use app;
+
+
+
+
 
 pub fn set_led(platform: &mut Firestorm, process: &mut Process, appid: AppId){
     platform.typedgpio.enable_output(0);
     platform.typedgpio.set_pin(0);
 }
+
+
+
+
 
 pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                   appid: AppId,f:fn(&mut Firestorm, &mut Process, AppId)) {
@@ -38,7 +48,7 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
         }
         match process.svc_number() {
             Some(syscall::WAIT) => {
-                println!("heyfool");
+               // println!("heyfool");
                 process.state = process::State::Waiting;
                 process.pop_syscall_stack();
                 
@@ -51,10 +61,10 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                            
                 let callback_ptr = process.r2() as *mut ();
                 let appdata = process.r3();
-               // println!("{:?}",driver_num);
-               // println!("{:?}",subdriver_num );
-               // println!("{:?}",callback_ptr );
-              //  println!("{:?}", appdata );
+                println!("{:?}",driver_num);
+                println!("{:?}",subdriver_num );
+                println!("{:?}",callback_ptr );
+                println!("{:?}", appdata );
                 let res = platform.with_driver(driver_num, |driver| {
                     let callback =
                         hil::Callback::new(appid, appdata, callback_ptr);
@@ -96,9 +106,36 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                 process.set_r0(res);
             },
             Some(syscall::SAFE) => {
-                    println!("hellothayre");
                     
-                    f(platform,process,appid);
+                let driver_num = process.r0();
+                let subdriver_num = process.r1();// ----- in stead of passing in a number, just pass in a pointer to the driver 
+                                                //function
+                          
+                let callback_ptr = process.r2() as *mut ();
+                let appdata = process.r3();
+                println!("{:?}","--------------------");
+                println!("{:?}",driver_num);
+                println!("{:?}",subdriver_num );
+                println!("{:?}",callback_ptr );
+                println!("{:?}", appdata );
+                println!("{:?}", process.cur_stack);
+                println!("{:?}", process.memory);
+                println!("{:?}", "-------------------");
+                platform.typedgpio.enable_output(0);
+                platform.typedgpio.set_pin(0);
+            /*    while process.memory[jk] != 72 {
+                    println!("{:?}",process.memory[jk]);
+                    jk=jk+1;
+                }*/
+                
+              //  println!("{:?}", jk);
+                
+                
+               //let ar = callback_ptr as fn( &mut Firestorm,  &mut Process,  AppId);
+              // f(platform,process,appid);
+              // process.wait_pc = callback_ptr as usize;
+               
+              // platform.typedconsole.puts(appid,1,"fs" as AppSlice<Shared,u8>,0 as hil::Callback);    
                     
                     
                     
