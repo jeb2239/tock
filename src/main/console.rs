@@ -16,36 +16,63 @@ fn write_done(_:usize,_ :usize, strptr: *mut String) -> isize {
     WRITE_DONE_TOKEN   
 }
 #[macro_export]
-macro_rules! print_as {
-    ($str:expr) => (puts(String::new($str)));
+macro_rules! print_as_fast {
+    ($str:expr) => (puts_wrapper(String::new($str)));
     ($fmt:expr, $($arg:tt)*) => (print_async(format_args!($fmt,$($arg)*)));
+}
+
+#[macro_export]
+macro_rules! print_as_slow {
+    ($str:expr) => (puts_old(String::new($str)));
+    ($fmt:expr, $($arg:tt)*) => (print_old(format_args!($fmt,$($arg)*)));
 }
 
 pub fn print_async(args: fmt::Arguments ){
     use core::fmt::Write;
     let mut string = String::new("");
     let _ = string.write_fmt(args);
-    puts(string);
+    let a = string.as_str() as *const str as *mut(); //copy
+    let b = string.len(); //copy
+    puts(string,a ,b );
+}
+
+pub fn puts_wrapper(string : String){
+    //let mut string = String::new("");
+    //let a = string.write_str(instr) as *const str as *mut();
+    let a = string.as_str() as *const str as *mut (); //copy 
+    let b = string.len(); //copy 
+    
+    puts(string,a , b);
+    
 }
 
 //take this model and push this down to the driver level
 //we will already be in the kernel so this will cost one context switch
 // instead of two
-pub fn puts(string: String){
-    
-    syscalls::allow(0, 1, string.as_str() as *const str as *mut (), string.len());
+pub fn puts(string: String,a:*mut (),b:usize){
+   
     let bx = Box::<String>::new(string);
-  //  println!("hell0");
+    syscalls::fast_print_async( a , b,
+    write_done as usize,bx.raw() as usize);
+    mem::forget(bx);
+  //  while syscalls::wait() != WRITE_DONE_TOKEN {}
+    
+}
+
+pub fn print_old(args: ::core::fmt::Arguments) {
+    use core::fmt::Write;
+    let mut string = String::new("");
+    let _ = string.write_fmt(args);
+    puts_old(string);
+} 
+
+
+pub fn puts_old(string: String) {
+    syscalls::allow(0, 1, string.as_str() as *const str as *mut (), string.len());
+    let bx = Box::new(string);
     syscalls::subscribe(0, 1, write_done as usize, bx.raw() as usize);
     mem::forget(bx);
-   // let a =  syscalls::wait();
-    //  println!("hell0");
-   // loop{}
- // println!("{}",a);
-    
-    while syscalls::wait() == WRITE_DONE_TOKEN {}
-    
-    
+  //  while syscalls::wait() != WRITE_DONE_TOKEN {}
 }
 
 #[allow(dead_code)]

@@ -4,6 +4,7 @@ extern {
     fn __allow(driver_num: usize, allownum: usize, ptr: *mut (), len: usize) -> isize;
     fn __subscribe(driver_num: usize, subnum: usize, cb: usize, appdata: usize) -> isize;
     fn __command(driver_num: usize, cmdnum: usize, arg1: usize) -> isize;
+    fn __fast_print_async(ptr:*mut (), len: usize, cb:usize, appdata:usize) -> isize;
     fn __wait() -> isize;
     fn __start_count() -> isize;
     fn __end_count() -> isize;
@@ -17,8 +18,13 @@ pub fn start_count() -> isize {
   }
 }
 
-
-
+pub fn fast_print_async(ptr: *mut (), len: usize, cb: usize, appdata:usize) -> isize {
+    
+    unsafe{
+        __fast_print_async(ptr,len,cb,appdata)
+    }
+    
+}
 
 pub fn end_count() -> isize {
   unsafe{

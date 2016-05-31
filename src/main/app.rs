@@ -41,7 +41,7 @@ use super::string::String;
 
 
 
-pub fn svc5(f:usize)  {
+pub fn svc5()  {
     
     
     
@@ -63,19 +63,24 @@ pub struct App {
 pub fn init(g:usize) {
    // print_as!("Welcome to Tock!\r\n");
    
-    let a = String::new("Heyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
+  //  let a = String::new("Heyyyyyyyyyyyyyyyyyyyyyy"); 
     
-   let g= g as *mut u8;
-    print!("{:?}\r\n",unsafe { (a.as_ptr() as usize) - (g as usize) } );
-    let stats = (unsafe { &*super::app }).memory.stats();
-    
-    print!("\tNum Allocated: {:?}\r\n", a.len());
-   // print_as!("haye");
+    syscalls::start_count();
+    print_as_slow!( "{}\r\n" );
+   print!("{}\r\n",syscalls::end_count());
    
-   (unsafe { &mut *super::app}).system_call = sched::set_led;//the pc
-   // let a = sched::set_led as usize;
+   
+   //let g= g as *mut u8;
+   // print!("{:?}\r\n",unsafe { (a.as_ptr() as usize) - (g as usize) } );
+    //let stats = (unsafe { &*super::app }).memory.stats();
     
-    syscalls::safe_call(3,4,sched::set_led as usize,3);
+  //  print!("\tNum Allocated: {:?}\r\n", a.len());
+   // print_as!("haye");
+  
+ // (unsafe { &mut *super::app}).system_call = sched::set_led;//the pc
+ //  let a = sched::set_led as usize;
+   //  svc5();
+    //syscalls::safe_call();
     
  //   print!("\tNum Allocated: {}\r\n", stats.num_allocated);
     // print!("\tNum Allocs: {}\r\n", stats.allocs);

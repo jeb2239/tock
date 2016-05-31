@@ -36,7 +36,7 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                 match process.callbacks.dequeue() {
                     None => { return },
                     Some(cb) => {
-                        println!("yooyoyoyo");
+                     //   println!("yooyoyoyo");
                         
                         process.state = process::State::Running;
                         process.switch_to_callback(cb);
@@ -55,16 +55,17 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                 break;
             },
             Some(syscall::SUBSCRIBE) => {
+                println!("SUBSCRIBE");
                 let driver_num = process.r0();
                 let subdriver_num = process.r1();// ----- in stead of passing in a number, just pass in a pointer to the driver 
                                                 //function
                            
                 let callback_ptr = process.r2() as *mut ();
                 let appdata = process.r3();
-                println!("{:?}",driver_num);
-                println!("{:?}",subdriver_num );
-                println!("{:?}",callback_ptr );
-                println!("{:?}", appdata );
+                // println!("{:?}",driver_num);
+                // println!("{:?}",subdriver_num );
+                // println!("{:?}",callback_ptr );
+                // println!("{:?}", appdata );
                 let res = platform.with_driver(driver_num, |driver| {
                     let callback =
                         hil::Callback::new(appid, appdata, callback_ptr);
@@ -88,6 +89,7 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                 process.set_r0(res);
             },
             Some(syscall::ALLOW) => {
+                println!("ALLOW");
                 let res = platform.with_driver(process.r0(), |driver| {
                     match driver {
                         Some(d) => {
@@ -106,43 +108,68 @@ pub unsafe fn do_process(platform: &mut Firestorm, process: &mut Process,
                 process.set_r0(res);
             },
             Some(syscall::SAFE) => {
-                    
+                
                 let driver_num = process.r0();
                 let subdriver_num = process.r1();// ----- in stead of passing in a number, just pass in a pointer to the driver 
                                                 //function
                           
                 let callback_ptr = process.r2() as *mut ();
                 let appdata = process.r3();
-                println!("{:?}","--------------------");
-                println!("{:?}",driver_num);
-                println!("{:?}",subdriver_num );
-                println!("{:?}",callback_ptr );
-                println!("{:?}", appdata );
-                println!("{:?}", process.cur_stack);
-                println!("{:?}", process.memory);
-                println!("{:?}", "-------------------");
-                platform.typedgpio.enable_output(0);
-                platform.typedgpio.set_pin(0);
-            /*    while process.memory[jk] != 72 {
-                    println!("{:?}",process.memory[jk]);
-                    jk=jk+1;
-                }*/
+              
+             
+                let res = platform.with_driver(process.r0(), |driver| {
+                    match driver {
+                        Some(d) => d.command(process.r1(),
+                                             process.r2()),
+                        None => -1
+                    }
+                });
+                process.set_r0(res);
                 
-              //  println!("{:?}", jk);
-                
-                
-               //let ar = callback_ptr as fn( &mut Firestorm,  &mut Process,  AppId);
-              // f(platform,process,appid);
-              // process.wait_pc = callback_ptr as usize;
-               
-              // platform.typedconsole.puts(appid,1,"fs" as AppSlice<Shared,u8>,0 as hil::Callback);    
-                    
+             
                     
                     
                   
                 
                   
-            }
+            },
+            
+            Some(syscall::FAST_PRINT_ASYNC) => {
+                println!("FAST_PRINT_ASYNC");
+                let res = platform.with_driver(0, |driver| {
+                    match driver {
+                        Some(d) => {
+                            let start_addr = process.r0() as *mut u8;
+                            let size = process.r1();
+                            if process.in_exposed_bounds(start_addr, size) {
+                                let slice = AppSlice::new(start_addr as *mut u8, size, appid);
+                                d.allow(appid, 1, slice)
+                            } else {
+                                -1
+                            }
+                        },
+                        None => -1
+                    }
+                });
+                
+                          
+                let callback_ptr = process.r2() as *mut ();
+                let appdata = process.r3();
+                
+                let res = platform.with_driver(0, |driver| {
+                    let callback =
+                        hil::Callback::new(appid, appdata, callback_ptr);
+                    match driver {
+                        Some(d) => d.subscribe(1,
+                                               callback),
+                        None => -1
+                    }
+                });
+                process.set_r0(res);
+                
+                
+                
+            },
             _ => {println!("end of the line"); }
         
     }
