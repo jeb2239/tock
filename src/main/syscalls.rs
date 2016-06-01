@@ -8,6 +8,7 @@ extern {
     fn __wait() -> isize;
     fn __start_count() -> isize;
     fn __end_count() -> isize;
+    fn __enable_and_set(driver_num: usize, cmdnum: usize, arg1: usize, arg2: usize) -> isize;
     fn switch_to_user(user_stack: *mut u8, mem_base: *mut u8) -> *mut u8;
     
 }
@@ -69,6 +70,22 @@ pub fn clear_pin(pin: usize) -> isize {
 
 pub fn toggle_pin(pin: usize) -> isize {
     command(1, 3, pin) //4
+}
+
+pub fn enable_and_set(pin: usize) -> isize {
+    unsafe{
+        __enable_and_set(1,0,1,pin) // arg1 = driver number
+                                    // arg2 = first command
+                                    // arg3 = second command
+                                    // arg4 = pin number
+    }
+}
+
+pub fn enable_and_set_cmd(pin: usize) -> isize {
+    unsafe{
+        __command(1,0,pin);
+        __command(1,1,pin)
+    }
 }
 
 

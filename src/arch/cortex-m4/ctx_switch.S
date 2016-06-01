@@ -12,6 +12,7 @@
 .global __command
 .global __safe_call
 .global __fast_print_async
+.global __enable_and_set
 .global to_kernel
 .thumb_func
 SVC_Handler:
@@ -86,6 +87,13 @@ __safe_call:
 __fast_print_async:
   push {r4 - r11} //watch
   svc 6
+  pop {r4-r11}
+  bx lr
+
+.thumb_func
+__enable_and_set:
+  push {r4 - r11} //watch
+  svc 7
   pop {r4-r11}
   bx lr
 

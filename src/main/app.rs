@@ -14,26 +14,6 @@ use super::string;
 use syscalls;
 use sched;
 
-//use super::boxed::BoxMgr;
-
-
-
-
-
-// pub fn svc6(){
-//     unsafe{
-//         asm!(
-//             "
-//             push {r4-r11}
-//             svc 6
-//             pop {r4-r11}
-//             "
-//         );
-//     }
-// }
-
-
-
 
 use super::boxed::BoxMgr;
 use super::string::String;
@@ -41,17 +21,17 @@ use super::string::String;
 
 
 
-pub fn svc5()  {
+// pub fn svc5()  {
     
     
     
-    unsafe{
-       asm!("push {r4-r11}
-            svc 5
-            pop {r4-r11}
-            ");
-    }
-}
+//     unsafe{
+//        asm!("push {r4-r11}
+//             svc 5
+//             pop {r4-r11}
+//             ");
+//     }
+// }
 
 pub struct App {
     pub memory: BoxMgr,
@@ -65,9 +45,17 @@ pub fn init(g:usize) {
    
   //  let a = String::new("Heyyyyyyyyyyyyyyyyyyyyyy"); 
     
-    syscalls::start_count();
-    print_as_slow!( "{}\r\n" );
-   print!("{}\r\n",syscalls::end_count());
+  //  syscalls::start_count();
+  syscalls::start_count();
+ for i in 0..10 {
+  
+  print_as_slow!("Hello");
+  
+  }
+  let a = syscalls::end_count();
+  print!("{}\r\n",a);
+  //  print_as_fast!( "{}\r\n" );
+  // print!("{}\r\n",syscalls::end_count());
    
    
    //let g= g as *mut u8;

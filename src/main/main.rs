@@ -59,13 +59,7 @@ pub extern fn main() {
         platform::init()
     };
    
-     // println!("{:?}",40 );
-    
-      
-    //(unsafe { &mut *app}).system_call;
-    
    
-    //println!("{:?}", 4);
     let processes = unsafe {
         process::process::PROCS = [Process::create(rust_app as *const usize)];
         &mut process::process::PROCS
@@ -73,13 +67,13 @@ pub extern fn main() {
 
     loop {
         unsafe {
-           // println!("{:?}", 30);
-            platform.service_pending_interrupts();//handle everything that wants to interrupt us 
-        //    println!("{:?}",(unsafe { &mut *app}).val);
-            for (i, p) in processes.iter_mut().enumerate() { //in here we have process 
+           
+            platform.service_pending_interrupts(); //handle everything that wants to interrupt us 
+       
+            for (i, p) in processes.iter_mut().enumerate() {  //in here we have process 
                 p.as_mut().map(|process| {
-                
-         //            println!("{:?}",(unsafe { &mut *app}).val); 
+                    
+                    
                     sched::do_process(platform, process, AppId::new(i),(unsafe {&mut * app}).system_call);
                    
                 });
@@ -87,13 +81,13 @@ pub extern fn main() {
 
             support::atomic(|| {
                 if !platform.has_pending_interrupts() {
-             //       println!("{:?}", 20);
+             
                    
                     support::wfi();
                 }
             })
         };
-       // println!("{:?}","yo" );
+
     }
 }
 
